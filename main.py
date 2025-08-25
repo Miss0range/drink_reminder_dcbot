@@ -5,6 +5,8 @@ import os
 import asyncio
 import random
 from dotenv import load_dotenv
+from flask import Flask
+from threading import Thread
 
 load_dotenv()
 
@@ -16,6 +18,19 @@ if guild_id_str is None:
 GUILD_ID = int(guild_id_str)  # Convert string to int here
 
 GUILD = discord.Object(id=GUILD_ID)
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run_web)
+    t.start()
 
 class Client(commands.Bot):
         
@@ -119,4 +134,5 @@ async def displayWCYD(interaction: discord.Interaction):
         image = discord.File(f, filename=file_name)
     await interaction.response.send_message(file=image)
     return
+keep_alive()
 client.run(BOT_TOKEN)
